@@ -6,7 +6,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-console.log(gag)
+// console.log(gag)
 
 const app = createApp(App)
 

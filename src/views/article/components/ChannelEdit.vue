@@ -1,7 +1,10 @@
 <script setup>
 import { ref } from 'vue'
+import { artUpdateChannelService, artAddChannelService } from '@/api/article.js'
 
 const dialogVisible = ref(false)
+// 预校验
+const formRef = ref()
 const formModel = ref({
   cate_name: '',
   cate_alias: ''
@@ -30,6 +33,25 @@ const rules = {
     }
   ]
 }
+// 直接渲染到页面，无需刷新页面
+const emit = defineEmits(['success'])
+const onSubmit = async () => {
+  // 预校验 validate
+  await formRef.value.validate()
+  // 判断是否有id来区分编辑和添加
+  const isEdit = formModel.value.id
+  if (isEdit) {
+    // 编辑分类
+    await artUpdateChannelService(formModel.value)
+    ElMessage.success('修改成功')
+  } else {
+    // 添加分类
+    await artAddChannelService(formModel.value)
+    ElMessage.success('新增成功')
+  }
+  dialogVisible.value = false
+  emit('success')
+}
 
 const open = (row) => {
   console.log(row)
@@ -53,6 +75,7 @@ defineExpose({
     width="30%"
   >
     <el-form
+      ref="formRef"
       :model="formModel"
       :rules="rules"
       label-width="100px"
@@ -74,10 +97,8 @@ defineExpose({
     </el-form>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogVisible = false">
-          Confirm
-        </el-button>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="onSubmit"> 确认 </el-button>
       </span>
     </template>
   </el-dialog>

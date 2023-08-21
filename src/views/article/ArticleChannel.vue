@@ -1,9 +1,13 @@
 <!-- 文章分类 -->
 <script setup>
 // import PageContainer from '@/components/PageContainer.vue'
-import { artGetArticleListService } from '@/api/article.js'
+import {
+  artGetArticleListService,
+  artDelChannelService
+} from '@/api/article.js'
 import { Edit, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
+
 import ChannelEdit from './components/ChannelEdit.vue'
 const channelList = ref([])
 // 加载
@@ -16,8 +20,6 @@ const getChannelList = async () => {
   const res = await artGetArticleListService()
   channelList.value = res.data.data
   loading.value = false
-
-  console.log(channelList.value)
 }
 getChannelList()
 // 添加分类按钮
@@ -27,13 +29,25 @@ const onAddChannel = () => {
 // 表格操作的编辑和删除按钮
 const onEditChannel = (row) => {
   dialog.value.open(row)
-  console.log(row)
+  // console.log(row)
 }
 
-const onDeleteChannel = (row, $index) => {
-  console.log(row, $index)
+const onDeleteChannel = async (row) => {
+  await ElMessageBox.confirm('你确认要删除这个分类吗？', '温馨提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+  await artDelChannelService(row.id)
+  ElMessage.success('删除成功')
+  getChannelList()
   // 用接口去删除
   // channelList.value = channelList.value.filter((item) => item.id !== row.id)
+}
+
+const onSuccess = () => {
+  // 重新获取列表数据
+  getChannelList()
 }
 </script>
 <template>
@@ -68,7 +82,8 @@ const onDeleteChannel = (row, $index) => {
         <el-empty description="没有数据" />
       </template>
     </el-table>
-    <channel-edit ref="dialog"></channel-edit>
+    <!-- 事件监听 -->
+    <channel-edit ref="dialog" @success="onSuccess"></channel-edit>
   </page-container>
 </template>
 

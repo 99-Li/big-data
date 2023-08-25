@@ -9,7 +9,9 @@ import { Edit, Delete } from '@element-plus/icons-vue'
 import { ref } from 'vue'
 
 import ChannelEdit from './components/ChannelEdit.vue'
+
 const channelList = ref([])
+
 // 加载
 const loading = ref(false)
 // 弹层相关
@@ -55,7 +57,11 @@ const onSuccess = () => {
     <template #extra>
       <el-button type="primary" plain @click="onAddChannel">添加分类</el-button>
     </template>
-    <el-table v-loading="loading" :data="channelList" style="width: 100%">
+    <el-table
+      v-loading="loading"
+      :data="channelList || defaultChannelList"
+      style="width: 100%"
+    >
       <el-table-column type="index" label="序号" width="180"></el-table-column>
       <el-table-column prop="cate_name" label="分类名称"></el-table-column>
       <el-table-column prop="cate_alias" label="分类别名"></el-table-column>

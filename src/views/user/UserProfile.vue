@@ -32,7 +32,7 @@ const rules = ref({
     {
       type: 'email',
       message: '请输入正确的邮箱格式',
-      trigger: ['blur', 'change']
+      trigger: 'blur'
     }
   ]
 })

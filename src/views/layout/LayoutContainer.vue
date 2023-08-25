@@ -8,7 +8,8 @@ import {
   Crop,
   EditPen,
   SwitchButton,
-  CaretBottom
+  CaretBottom,
+  Histogram
 } from '@element-plus/icons-vue'
 import avatar from '@/assets/default.png'
 import { useUserStore } from '@/stores'
@@ -57,6 +58,10 @@ const handleCommand = (key) => {
           <el-icon><promotion /></el-icon>
           <span>文章管理</span>
         </el-menu-item>
+        <el-menu-item index="/data/echarts">
+          <el-icon><Histogram /></el-icon>
+          <span>数据分析</span>
+        </el-menu-item>
         <el-sub-menu index="/user">
           <template #title>
             <el-icon><UserFilled /></el-icon>
@@ -80,7 +85,7 @@ const handleCommand = (key) => {
     <el-container>
       <el-header>
         <div>
-          未知程序员：<strong>{{
+          尊敬的用户：<strong>{{
             userStore.user.nickname || userStore.user.username
           }}</strong>
         </div>
@@ -114,7 +119,7 @@ const handleCommand = (key) => {
         <!-- 嵌入二级路由 -->
         <router-view></router-view>
       </el-main>
-      <el-footer>大事件 ©2023 Created by 黑马程序员</el-footer>
+      <el-footer>大事件 ©2023 Created by 前端程序员</el-footer>
     </el-container>
   </el-container>
 </template>

@@ -13,4 +13,4 @@ export default pinia
 
 // 下面等价于上面
 export * from './modules/user' // 接收 user 模块的所有按需导出
-export * from './modules/count'
+// export * from './modules/count'

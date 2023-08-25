@@ -13,7 +13,7 @@ const router = createRouter({
     {
       path: '/',
       component: () => import('@/views/layout/LayoutContainer.vue'), // 首页架子
-      redirect: '/article/manage',
+      redirect: '/article/channel',
       children: [
         {
           // 文章管理
@@ -24,6 +24,11 @@ const router = createRouter({
           // 文章分类
           path: '/article/channel',
           component: () => import('@/views/article/ArticleChannel.vue')
+        },
+        {
+          // 文章分类
+          path: '/data/echarts',
+          component: () => import('@/views/data analysis/Echarts.vue')
         },
         {
           // 基本资料

@@ -20,7 +20,9 @@ const dialog = ref()
 const getChannelList = async () => {
   loading.value = true
   const res = await artGetArticleListService()
+
   channelList.value = res.data.data
+  console.log(channelList.value)
   loading.value = false
 }
 getChannelList()

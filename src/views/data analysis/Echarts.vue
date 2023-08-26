@@ -1,65 +1,155 @@
 <script setup>
-// 引入 echarts 核心模块，核心模块提供了 echarts 使用必须要的接口。
-import * as echarts from 'echarts/core'
-// 引入柱状图图表，图表后缀都为 Chart
-import { BarChart } from 'echarts/charts'
-// 引入提示框，标题，直角坐标系，数据集，内置数据转换器组件，组件后缀都为 Component
+import * as echarts from 'echarts'
+import { onMounted } from 'vue'
 import {
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  DatasetComponent,
-  TransformComponent
-} from 'echarts/components'
-// 标签自动布局、全局过渡动画等特性
-import { LabelLayout, UniversalTransition } from 'echarts/features'
-// 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
-import { CanvasRenderer } from 'echarts/renderers'
+  artGetArticleListService,
+  artGetArticleListsService
+} from '@/api/article.js'
+import { ref } from 'vue'
+// 加载
+const loading = ref(false)
+const data = ref([])
+const count = ref([])
+// 定义状态为已发布和草稿的总数量
+const stateY = ref(0)
+const stateN = ref(0)
+// 定义请求参数对象
+const params = ref({
+  pagenum: 1, // 当前页面数
+  // 目前数据有多条，超过了5，因为没有设置页面跳转，只能最多显示5条
+  pagesize: 999, // 当页所需要的数据条数
+  cate_id: '',
+  state: ''
+})
 
-// 注册必须的组件
-echarts.use([
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  DatasetComponent,
-  TransformComponent,
-  BarChart,
-  LabelLayout,
-  UniversalTransition,
-  CanvasRenderer
-])
+// 基于准备好的dom，初始化echarts实例
+onMounted(async () => {
+  try {
+    loading.value = true
+    const resC = await artGetArticleListService()
+    const resA = await artGetArticleListsService(params.value)
+
+    resA.data.data.map((item) => {
+      if (item.state === '已发布') stateY.value += 1
+      else stateN.value += 1
+    })
+    count.value = resA.data.data.map((item) => item.cate_name)
+    // 文章分类数据初始值
+    data.value = resC.data.data.map((index) => ({
+      value: 0, //文章数(总) 草稿 + 已发布
+      name: index.cate_name // 分类名
+    }))
+    // 循环数据，获取每个文章分类下的文章数量
+    for (let i = 0; i < count.value.length; i++) {
+      const name = count.value[i]
+      for (let j = 0; j < data.value.length; j++) {
+        if (data.value[j].name === name) {
+          data.value[j].value += 1
+        }
+      }
+    }
+    loading.value = false
+  } catch (error) {
+    console.log(error)
+  }
+
+  // 生成饼状图的数据
+  // 饼图分类
+  const myChartC = echarts.init(document.querySelector('.channel'))
+
+  const optionC = {
+    title: {
+      text: '文章分类数据详情',
+      subtext: '仅统计不同分类文章数量',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item'
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: '50%',
+        data: data.value.map((item) => ({
+          value: item.value,
+          name: item.name
+        })),
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  }
+  myChartC.setOption(optionC)
+
+  var myChartS = echarts.init(document.querySelector('.state'))
+
+  var optionS = {
+    title: {
+      text: '文章管理数据详情',
+      subtext: '统计文章状态',
+      left: 'center'
+    },
+    tooltip: {
+      trigger: 'item'
+    },
+    series: [
+      {
+        name: 'Access From',
+        type: 'pie',
+        radius: '50%',
+        data: [
+          { value: stateY.value, name: '已发布' },
+          { value: stateN.value, name: '草稿' }
+        ],
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      }
+    ]
+  }
+  myChartS.setOption(optionS)
+})
 </script>
 
 <template>
   <page-container title="数据分析">
-    <div class="main"></div>
     <div class="flex">
-      <div class="channel"></div>
-      <div class="state"></div>
+      <div class="channel" v-loading="loading"></div>
+      <div class="main">柱状图</div>
+      <div class="state" v-loading="loading"></div>
     </div>
   </page-container>
 </template>
 
 <style lang="scss" scoped>
-.main {
-  margin: 0 auto;
-  height: 350px;
-  width: 1000px;
-  border: 1px solid pink;
-}
 .flex {
   //   margin-top: 50px;
   display: flex;
   justify-content: space-between;
-  .channel {
-    width: 300px;
-    height: 300px;
-    border: 1px solid skyblue;
+  box-sizing: border-box;
+  .main {
+    margin-top: 75px;
+    height: 500px;
+    width: 800px;
+    border: 1px solid pink;
   }
+  .channel,
   .state {
-    width: 300px;
+    margin-top: 170px;
+    padding-top: 25px;
+    padding-left: 25px;
+    width: 400px;
     height: 300px;
-    border: 1px solid orange;
   }
 }
 </style>

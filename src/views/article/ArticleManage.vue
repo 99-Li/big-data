@@ -27,7 +27,7 @@ const params = ref({
 const getArticleLists = async () => {
   loading.value = true
   const res = await artGetArticleListsService(params.value)
-  // console.log(res.data.data)
+  console.log(res.data.data)
 
   articleList.value = res.data.data
   total.value = res.data.total

@@ -34,7 +34,7 @@ pnpm build
 pnpm lint
 ```
 
-### 测试的账号密码(adminF,Li12#$),可自己新注册
+###  Test account password 测试的账号密码,可自己新注册
 
 ```sh
 username: adminF

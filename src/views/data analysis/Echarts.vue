@@ -31,8 +31,8 @@ const params1 = ref({
 // 柱状图数据定义
 const AllChannel = ref([])
 const AllArticles = ref([])
-const editorName = ref([])
-const editorArticle = ref([])
+const editorName = ref([]) // 获取所有草稿状态文章的分类
+const editorArticle = ref([]) // 提取所有分类，并将每个分类中加入value计算文章数
 const editorArticles = ref([])
 const publishArticle = ref([])
 

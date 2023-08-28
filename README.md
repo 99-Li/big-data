@@ -33,3 +33,11 @@ pnpm build
 ```sh
 pnpm lint
 ```
+
+### 测试的账号密码(adminF,Li12#$),可自己新注册
+
+```sh
+username: adminF
+password: Li12#$
+Or you can create your own from the registration page and use it
+```
